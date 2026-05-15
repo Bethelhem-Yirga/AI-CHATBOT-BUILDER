@@ -10,6 +10,7 @@ import uuid
 import os
 import google.generativeai as genai
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI(title="AI Chatbot Builder API")
@@ -24,6 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # ============ Database Setup ============
 Base = declarative_base()
 
@@ -356,16 +359,11 @@ def get_embed_code(bot_id: int, db=Depends(get_db)):
     primaryColor: "{bot.primary_color}",
     welcomeMessage: "{bot.welcome_message}"
   }};
-  (function() {{
-    var script = document.createElement('script');
-    script.src = "http://localhost:8000/embed.js";
-    document.body.appendChild(script);
-  }})();
 </script>
+<script src="http://localhost:8000/static/embed.js"></script>
 <!-- End Chatbot Widget -->"""
     
     return {"embed_code": embed_code}
-
 # ============ Root ============
 @app.get("/")
 def root():
